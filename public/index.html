@@ -5,12 +5,68 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UDP Quiz</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        background-color: #f5f5ff;
+        background-color: #f5f5ff;
+        background-image: linear-gradient(#c7c7ff 2px, transparent 2px),
+          linear-gradient(90deg, #c7c7ff 2px, transparent 2px),
+          linear-gradient(#c7c7ff 1px, transparent 1px),
+          linear-gradient(90deg, #c7c7ff 1px, #f5f5ff 1px);
+        background-size: 50px 50px, 50px 50px, 10px 10px, 10px 10px;
+        background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: #111;
+      }
+      div.container {
+        background-color: white;
+        padding: 15px 25px;
+        border-radius: 5px;
+        box-shadow: 0px 0px 5px 5px #6666fd14;
+        max-width: min(95vw, 600px);
+      }
+      h1,
+      a {
+        color: #1c6aff;
+      }
+      code {
+        font-family: ui-monospace, Menlo, Monaco, "Cascadia Mono",
+          "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Monospace",
+          "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Courier New",
+          monospace;
+      }
+    </style>
   </head>
   <body>
-    <code>
-      <pre>
-Hi! This is UDP Quiz, where all the UDP ports are open! Any UDP packet sent to udpquiz.com will be sent back as is, and is great for testing what udp ports on your network are open</pre
-      >
-    </code>
+    <div class="container">
+      <h1>Outgoing udp port tester</h1>
+      <p>
+        This server listens on all udp ports, and sends back all udp packets
+        sent to it.
+      </p>
+      <p>
+        With <a href="https://nmap.org/">Nmap</a> installed, you could use a
+        command such as the following to check the open outgoing udp ports on
+        your network:
+      </p>
+      <code>nmap -v -sU -p- --min-rate=1000 udpquiz.com</code>
+      <p>
+        <a href="https://github.com/radiantly/udpquiz">Source</a>
+      </p>
+    </div>
   </body>
 </html>

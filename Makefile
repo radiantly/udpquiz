@@ -3,7 +3,11 @@ DEVICE=eth0
 all: qdisc
 
 bpf.o: bpf.c
-	clang -O2 -target bpf $< -c -o $@
+	clang $(DEBUG) -O2 -target bpf $< -c -o $@
+
+debug: DEBUG = -DDEBUG
+
+debug: all
 
 qdisc-del:
 	-sudo tc qdisc del dev $(DEVICE) ingress handle ffff:
@@ -15,4 +19,4 @@ qdisc: qdisc-del bpf.o
 clean: qdisc-del
 	-rm bpf.o
 
-.PHONY: all qdisc qdisc-del clean
+.PHONY: all debug qdisc qdisc-del clean

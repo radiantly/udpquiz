@@ -9,6 +9,16 @@
 
 #include "bpf/bpf_helpers.h"
 
+#ifdef DEBUG
+#define trace_printk(fmt, ...)                               \
+    do {                                                     \
+        char _fmt[] = fmt;                                   \
+        bpf_trace_printk(_fmt, sizeof(_fmt), ##__VA_ARGS__); \
+    } while (0)
+#else
+#define trace_printk(fmt, ...)
+#endif
+
 SEC("classifier")
 int cls_main(struct __sk_buff *skb) {
     return -1;

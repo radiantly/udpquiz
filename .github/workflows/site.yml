@@ -1,0 +1,18 @@
+name: Run
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  site_check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - run: |
+          python3 -V
+          python3 -m pip install pandas plotext
+          python3 .github/test_udp.py udpquiz.com

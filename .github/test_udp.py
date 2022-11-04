@@ -5,7 +5,7 @@ from socket import AF_INET, SOCK_DGRAM, gethostbyname, socket
 from time import perf_counter
 
 import pandas as pd
-import plotext as plt
+import plotille
 
 # Configuration options
 PACKETS_TO_SEND = 1000
@@ -53,10 +53,8 @@ def main():
                 f"\r{i}/{PACKETS_TO_SEND} packets sent (failures: {failures})", flush=True, end=""
             )
 
-    print()
-
-    plt.hist(rtt, bins=10)
-    plt.show()
+    print("\r", end="")
+    print(plotille.hist(rtt, bins=10))
 
     print(f"{failures} failures")
     print(pd.Series(rtt).describe())

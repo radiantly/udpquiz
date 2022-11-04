@@ -14,5 +14,5 @@ jobs:
 
       - run: |
           python3 -V
-          python3 -m pip install pandas plotext
+          python3 -m pip install pandas plotille
           python3 .github/test_udp.py udpquiz.com

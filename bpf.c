@@ -43,12 +43,12 @@ int act_main(struct __sk_buff *skb) {
     memcpy(dst_mac, eth->h_dest, ETH_ALEN);
 
     /* ip addresses (L3) */
-    __u32 src_ip = ip->saddr;
-    __u32 dst_ip = ip->daddr;
+    __be32 src_ip = ip->saddr;
+    __be32 dst_ip = ip->daddr;
 
     // ignore private ip ranges 10.0.0.0/8, 127.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
-    if ((src_ip >> 24) == 10 || ((src_ip >> 24) == 127) || (src_ip >> 20) == 2768 || (src_ip >> 16) == 49320 ||
-        (dst_ip >> 24) == 10 || ((dst_ip >> 24) == 127) || (dst_ip >> 20) == 2768 || (dst_ip >> 16) == 49320)
+    if ((src_ip & 0xff) == 10 || ((src_ip & 0xff) == 127) || (src_ip & 0xf0ff) == 0x10ac || (src_ip & 0xffff) == 0xa8c0 ||
+        (dst_ip & 0xff) == 10 || ((dst_ip & 0xff) == 127) || (dst_ip & 0xf0ff) == 0x10ac || (dst_ip & 0xffff) == 0xa8c0)
         return TC_ACT_UNSPEC;
 
     /* and source/destination ports (L4) */

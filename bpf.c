@@ -21,11 +21,6 @@
 
 SEC("classifier")
 int cls_main(struct __sk_buff *skb) {
-    return -1;
-}
-
-SEC("action")
-int act_main(struct __sk_buff *skb) {
     /* packet data is stored in skb->data */
     void *data = (void *)(long)skb->data;
 
@@ -55,6 +50,8 @@ int act_main(struct __sk_buff *skb) {
     /* ip addresses (L3) */
     __be32 src_ip = ip->saddr;
     __be32 dst_ip = ip->daddr;
+
+    trace_printk("FROM: %d...%d", src_ip & 0xff, src_ip >> 24);
 
     // ignore private ip ranges 10.0.0.0/8, 127.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
     if ((src_ip & 0xff) == 10 || ((src_ip & 0xff) == 127) || (src_ip & 0xf0ff) == 0x10ac || (src_ip & 0xffff) == 0xa8c0 ||

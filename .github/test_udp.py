@@ -1,3 +1,4 @@
+import argparse
 import random
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -31,11 +32,13 @@ def sendPacket(host):
 
 
 def main():
-    if len(sys.argv) != 2:
-        print("Usage: python test_udp.py SERVER")
-        sys.exit(1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-v", "--verbose", help="increase output verbosity", action="store_true")
+    parser.add_argument("host", help="The host to test")
 
-    host = gethostbyname(sys.argv[1])
+    args = parser.parse_args()
+
+    host = gethostbyname(args.host)
 
     rtt = []
     failures = 0
@@ -43,15 +46,19 @@ def main():
         print(f"Sending {PACKETS_TO_SEND} packets to {host}")
         futures = [executor.submit(sendPacket, host) for _ in range(PACKETS_TO_SEND)]
 
-        for i, future in enumerate(as_completed(futures)):
+        for future in as_completed(futures):
             result = future.result()
             if result == -1:
                 failures += 1
             else:
                 rtt.append(result)
-            print(
-                f"\r{i}/{PACKETS_TO_SEND} packets sent (failures: {failures})", flush=True, end=""
-            )
+
+            if args.verbose:
+                print(
+                    f"\r{failures + len(rtt)}/{PACKETS_TO_SEND} packets sent (failures: {failures})",
+                    flush=True,
+                    end="",
+                )
 
     print("\r", end="")
     print(plotille.hist(rtt, bins=10))

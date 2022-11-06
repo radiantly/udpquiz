@@ -1,4 +1,5 @@
-DEVICE=eth0
+# If the DEVICE env variable is not set, choose first non-loopback/non-virt interface
+DEVICE ?= $(shell ip -br l | awk '$$1 !~ "lo|vir" { print $$1; exit }')
 
 all: qdisc
 
@@ -8,13 +9,14 @@ bpf.o: bpf.c
 debug: DEBUG = -DDEBUG
 
 debug: all
+	-sudo tc exec bpf dbg
 
 qdisc-del:
-	-sudo tc qdisc del dev $(DEVICE) ingress handle ffff:
+	-sudo tc qdisc del dev $(DEVICE) clsact
 
 qdisc: qdisc-del bpf.o
-	sudo tc qdisc add dev $(DEVICE) ingress handle ffff: && \
-	sudo tc filter add dev $(DEVICE) parent ffff: bpf obj bpf.o sec classifier flowid ffff:1 action bpf obj bpf.o sec action ok
+	sudo tc qdisc add dev $(DEVICE) clsact && \
+	sudo tc filter add dev $(DEVICE) ingress bpf direct-action obj bpf.o
 
 clean: qdisc-del
 	-rm bpf.o

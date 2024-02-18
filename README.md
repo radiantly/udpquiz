@@ -1,4 +1,4 @@
-# UDPQuiz
+# UDPQuiz ![Site status](https://github.com/radiantly/udpquiz/actions/workflows/site.yml/badge.svg)
 
 UDPQuiz is an eBPF program that runs on Linux to send back all udp packets as is. This makes it a perfect tool to test which udp ports have been firewalled on your network.
 

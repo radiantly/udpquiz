@@ -22,7 +22,8 @@
 
 #include "bpf/bpf_helpers.h"
 
-struct {
+struct
+{
     __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
     __uint(max_entries, 1);
     __type(key, __u32);
@@ -56,8 +57,8 @@ int cls_main(struct __sk_buff *skb)
     void *data = (void *)(long)skb->data;
 
     struct ethhdr *eth = data;
-    struct iphdr *ip = (data + sizeof(struct ethhdr));
-    struct udphdr *udp = (data + sizeof(struct ethhdr) + sizeof(struct iphdr));
+    struct iphdr *ip = data + sizeof(struct ethhdr);
+    struct udphdr *udp = data + sizeof(struct ethhdr) + sizeof(struct iphdr);
 
     // check if ip packet
     if (eth->h_proto != __constant_htons(ETH_P_IP))
@@ -93,6 +94,19 @@ int cls_main(struct __sk_buff *skb)
     // do not respond on 443 (caddy handles this)
     if (dest_port == __constant_htons(443))
         return TC_ACT_UNSPEC;
+
+    // let dns responses pass through (check QR bit in dns flags)
+    if (src_port == __constant_htons(53))
+    {
+        // +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        // |                      ID                       |
+        // +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        // |QR|   Opcode  |AA|TC|RD|RA|    Z   |   RCODE   |
+        // +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+        __u8 *dns_flags = data + sizeof(struct ethhdr) + sizeof(struct iphdr) + sizeof(struct udphdr) + 2;
+        if ((void *)dns_flags < (void *)(long)skb->data_end && (*dns_flags & 0x80))
+            return TC_ACT_UNSPEC;
+    }
 
     __u8 current_ttl = ip->ttl;
     if (current_ttl <= 1)

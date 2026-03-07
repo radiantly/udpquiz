@@ -1,0 +1,5 @@
+# generated object file
+bpf.o
+
+# generated for the go module
+bpfstatus/udpquizbpf*

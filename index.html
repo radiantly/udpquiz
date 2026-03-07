@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UDPQuiz</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      body {
+        font-family:
+          "Courier Prime", ui-monospace, Menlo, Monaco, "Cascadia Mono",
+          "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Mono",
+          "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Consolas",
+          "Courier New", monospace;
+        display: flex;
+        justify-content: center;
+        padding: 5vmin 0;
+        line-height: 1.35;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        max-width: min(95vw, 600px);
+        min-width: 0;
+      }
+      h1 {
+        font-weight: 400;
+        text-transform: uppercase;
+      }
+      p {
+        font-size: 14px;
+      }
+      svg {
+        align-self: center;
+        margin: 3vh 0;
+        max-width: 484px;
+        object-fit: contain;
+      }
+      svg div {
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Welcome to UdpQuiz</h1>
+      <p>
+        UDPQuiz.com hosts a server that has all 65,535 ports open and responds
+        to udp packets sent to any of those ports. For instance, you're
+        currently connected to udp port 443 (the default https port):
+      </p>
+      <svg viewBox="0 0 484 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <foreignObject x="0" y="50" width="100%" height="100%">
+          <div>Your computer</div>
+        </foreignObject>
+
+        <foreignObject x="404" y="50" width="100%" height="100%">
+          <div>udpquiz.com</div>
+        </foreignObject>
+        <path
+          d="M25 37V35.4762H69V37H25ZM27.6452 33.2993V5H66.3548V33.2993H27.6452ZM28.8824 32.102H65.1176V6.30612H28.8824V32.102Z"
+          fill="black"
+        />
+        <path
+          d="M428.889 0H459.111C459.612 0 460.093 0.196347 460.447 0.545846C460.801 0.895346 461 1.36937 461 1.86364V9.31818C461 9.81245 460.801 10.2865 460.447 10.636C460.093 10.9855 459.612 11.1818 459.111 11.1818H428.889C428.388 11.1818 427.907 10.9855 427.553 10.636C427.199 10.2865 427 9.81245 427 9.31818V1.86364C427 1.36937 427.199 0.895346 427.553 0.545846C427.907 0.196347 428.388 0 428.889 0ZM428.889 14.9091H459.111C459.612 14.9091 460.093 15.1054 460.447 15.4549C460.801 15.8044 461 16.2785 461 16.7727V24.2273C461 24.7215 460.801 25.1956 460.447 25.5451C460.093 25.8946 459.612 26.0909 459.111 26.0909H428.889C428.388 26.0909 427.907 25.8946 427.553 25.5451C427.199 25.1956 427 24.7215 427 24.2273V16.7727C427 16.2785 427.199 15.8044 427.553 15.4549C427.907 15.1054 428.388 14.9091 428.889 14.9091ZM428.889 29.8182H459.111C459.612 29.8182 460.093 30.0145 460.447 30.364C460.801 30.7135 461 31.1876 461 31.6818V39.1364C461 39.6306 460.801 40.1047 460.447 40.4542C460.093 40.8037 459.612 41 459.111 41H428.889C428.388 41 427.907 40.8037 427.553 40.4542C427.199 40.1047 427 39.6306 427 39.1364V31.6818C427 31.1876 427.199 30.7135 427.553 30.364C427.907 30.0145 428.388 29.8182 428.889 29.8182ZM438.333 7.45455H440.222V3.72727H438.333V7.45455ZM438.333 22.3636H440.222V18.6364H438.333V22.3636ZM438.333 37.2727H440.222V33.5455H438.333V37.2727ZM430.778 3.72727V7.45455H434.556V3.72727H430.778ZM430.778 18.6364V22.3636H434.556V18.6364H430.778ZM430.778 33.5455V37.2727H434.556V33.5455H430.778Z"
+          fill="#393939"
+        />
+        <line x1="85" y1="21" x2="406" y2="20.5" stroke="#393939" />
+        <foreignObject x="85" y="0" width="321" height="100%">
+          <div style="display: flex; justify-content: space-between">
+            <div>Port {{placeholder "http.request.remote.port"}}</div>
+            <div>Port 443</div>
+          </div>
+        </foreignObject>
+      </svg>
+      <p>
+        The other ports don't have an https server listening to them, so you
+        will not be able to visit them on your browser. However, you can use a
+        tool like nmap instead:
+      </p>
+      <p>nmap -sU -p- udpquiz.com</p>
+      <p>
+        If the above command returns any status that's not "open", that probably
+        means that a firewall on your network is blocking udp packets to that
+        port. Exceptions: ports 67 and 1900 (blocked by my upstream provider)
+        and port 443 (only responds to quic connections).
+      </p>
+      <p>
+        {{placeholder "udpquiz.bpf_packets"}} udp packets sent via eBPF since
+        the last server restart on {{placeholder "udpquiz.start"}}.
+      </p>
+      <p>Note that this site is only accessible via UDP. Source at GitHub.</p>
+    </div>
+  </body>
+</html>

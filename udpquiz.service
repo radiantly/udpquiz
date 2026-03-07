@@ -1,0 +1,14 @@
+[Unit]
+Description=UDPQuiz
+After=network.target network-online.target
+Requires=network-online.target
+
+[Service]
+EnvironmentFile=/etc/udpquiz/env
+ExecStart=/usr/local/bin/udpquiz run --config /etc/udpquiz/Caddyfile
+ExecReload=/usr/local/bin/udpquiz reload --config /etc/udpquiz/Caddyfile
+TimeoutStopSec=5s
+LimitNOFILE=1048576
+
+[Install]
+WantedBy=multi-user.target

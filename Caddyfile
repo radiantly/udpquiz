@@ -1,0 +1,17 @@
+{
+	auto_https disable_redirects
+	servers {
+		protocols h3
+	}
+	udpquiz
+}
+
+udpquiz.com {
+	bpfstatus
+	file_server
+	root /usr/share/udpquiz/
+	templates
+	tls {
+		dns cloudflare {env.CLOUDFLARE_API_TOKEN}
+	}
+}

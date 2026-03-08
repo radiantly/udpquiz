@@ -27,10 +27,6 @@
           Cantarell,
           "Open Sans",
           "Helvetica Neue",
-          sans-serif,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          Roboto,
           Helvetica,
           Arial,
           sans-serif,
@@ -113,6 +109,13 @@
         However, with just the h3 protocol enabled, caddy struggles with
         automatic certificate provisioning. I didn't spend much time debugging
         this, instead opting to use dns-01 challenge.
+      </p>
+      <p>
+        The last step is to modify the eBPF filter to pass quic packets to caddy
+        unmodified. QUIC v1 has a fixed bit 6 in every packet header we could
+        check, but RFC 9287 introduced later allows greasing this bit to be any
+        value. In the end, I decided to simply pass any incoming udp packet on
+        port 443 to caddy and add a note to the home page.
       </p>
       <p>
         Testing this in various browsers: Works fine on Firefox on Linux,

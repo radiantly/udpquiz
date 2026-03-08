@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UDPQuiz</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100vh;
+      }
+
+      body {
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Oxygen,
+          Ubuntu,
+          Cantarell,
+          "Open Sans",
+          "Helvetica Neue",
+          sans-serif,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          Roboto,
+          Helvetica,
+          Arial,
+          sans-serif,
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Segoe UI Symbol";
+        display: flex;
+        justify-content: center;
+        padding: 5vmin 0;
+        line-height: 1.5;
+        color: #111;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        max-width: min(95vw, 600px);
+        min-width: 0;
+      }
+      code {
+        font-family:
+          "Courier Prime", ui-monospace, Menlo, Monaco, "Cascadia Mono",
+          "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Mono",
+          "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Consolas",
+          "Courier New", monospace;
+        padding: 2px 5px;
+        background-color: #333;
+        color: #fff;
+      }
+      a {
+        color: inherit;
+        text-decoration: underline dotted;
+      }
+      a.back {
+        color: #666;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>This site is only accessible via UDP</h1>
+      <p>
+        It was a friday night when I saw that someone had
+        <a
+          href="https://github.com/radiantly/udpquiz/issues/2#issuecomment-3997172530"
+        >
+          commented on an issue
+        </a>
+        saying that the site was down. I created udpquiz back in 2022, and it
+        seemed like a good time to give it a fresh coat of paint.
+      </p>
+      <p>
+        For the update, I thought it'd be pretty interesting if it were only
+        available over udp (fits the theme, amirite?). The solution to this is
+        to serve the site over HTTP/3 which uses the QUIC transport layer that
+        uses udp.
+      </p>
+      <p>
+        Enabling the site to use just HTTP/3 was as simple as adding
+        <code>protocols h3</code>
+        to the Caddyfile.
+      </p>
+      <p>
+        That's not enough though - the browser needs some way to figure out that
+        the server actually offers HTTP/3 support. This is accomplished in two
+        ways.
+      </p>
+      <ul>
+        <li>
+          The first is by sending the <code>Alt-Svc</code> header when a client
+          requests the page over HTTP/1.1 or HTTP/2. Since we aren't offering
+          the page via these protocols, this isn't an option for us.
+        </li>
+        <li>
+          The second option (and the option we're going with) is to create an
+          HTTPS DNS record with the value
+          <code>no-default-alpn alpn="h3" ipv4hint="SERVER_IP"</code>.
+        </li>
+      </ul>
+      <p>
+        However, with just the h3 protocol enabled, caddy struggles with
+        automatic certificate provisioning. I didn't spend much time debugging
+        this, instead opting to use dns-01 challenge.
+      </p>
+      <p>
+        Testing this in various browsers: Works fine on Firefox on Linux,
+        Android. Safari on MacOS worked some of the time(?). I could not get
+        Google Chrome to load the site at all. Taking a quick look at wireshark,
+        it's clear that Google Chrome isn't sending an HTTPS DNS request at all
+        and just tries TCP.
+      </p>
+      <p><a class="back" href="/">← Back to main page</a></p>
+    </div>
+  </body>
+</html>

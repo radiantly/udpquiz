@@ -48,23 +48,33 @@
       svg div {
         font-size: 12px;
       }
+      a {
+        color: inherit;
+        text-decoration: underline dotted;
+      }
     </style>
   </head>
   <body>
     <div class="container">
       <h1>Welcome to UdpQuiz</h1>
       <p>
-        UDPQuiz.com hosts a server that has all 65,535 ports open and responds
-        to udp packets sent to any of those ports. For instance, you're
-        currently connected to udp port 443 (the default https port):
+        This is a server that has all 65,535 ports open and responds to udp
+        packets sent to any of those ports. For instance, you're currently
+        connected to udp port 443 (the default https port):
       </p>
       <svg viewBox="0 0 484 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <foreignObject x="0" y="50" width="100%" height="100%">
-          <div>Your computer</div>
-        </foreignObject>
-
-        <foreignObject x="404" y="50" width="100%" height="100%">
-          <div>udpquiz.com</div>
+        <foreignObject x="0" y="0" width="100%" height="100%">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-end;
+              height: 100%;
+            "
+          >
+            <div>Your computer</div>
+            <div>udpquiz.com</div>
+          </div>
         </foreignObject>
         <path
           d="M25 37V35.4762H69V37H25ZM27.6452 33.2993V5H66.3548V33.2993H27.6452ZM28.8824 32.102H65.1176V6.30612H28.8824V32.102Z"
@@ -95,10 +105,14 @@
         and port 443 (only responds to quic connections).
       </p>
       <p>
-        {{placeholder "udpquiz.bpf_packets"}} udp packets sent via eBPF since
-        the last server restart on {{placeholder "udpquiz.start"}}.
+        {{placeholder "udpquiz.bpf_packets"}} udp packets processed via eBPF
+        since the last server restart on {{placeholder "udpquiz.start"}}.
       </p>
-      <p>Note that this site is only accessible via UDP. Source at GitHub.</p>
+      <p>
+        Note that this site is
+        <a href="only-udp.html">only accessible via UDP</a>. Source at
+        <a href="https://github.com/radiantly/udpquiz">GitHub</a>.
+      </p>
     </div>
   </body>
 </html>

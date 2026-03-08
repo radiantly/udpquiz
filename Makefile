@@ -34,7 +34,15 @@ install: udpquiz
 	install -m 755 udpquiz /usr/local/bin/udpquiz
 	install -m 644 udpquiz.service /etc/systemd/system/
 	install -Dm 644 Caddyfile /etc/udpquiz/Caddyfile
-	install -Dm 644 index.html /usr/share/udpquiz/index.html
+	install -d /usr/share/udpquiz
+	cp -r public/. /usr/share/udpquiz/
 	systemctl daemon-reload
+	@echo ""
+	@echo "# Manual step: add CloudFlare token"
+	@echo "echo \"CLOUDFLARE_API_TOKEN=<your token>\" > /etc/udpquiz/env"
+	@echo "chmod 600 /etc/udpquiz/env"
+	@echo ""
+	@echo "# Manual step: enable the udpquiz service"
+	@echo "systemctl enable --now udpquiz"
 
 .PHONY: all debug qdisc qdisc-del clean install

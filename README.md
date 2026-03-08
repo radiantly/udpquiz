@@ -2,24 +2,11 @@
 
 UDPQuiz is an eBPF program that runs on Linux to send back all udp packets as is. This makes it a perfect tool to test which udp ports have been firewalled on your network.
 
-Visit https://udpquiz.com/ to try it out!
+Visiting the site requires your browser to support HTTP/3 and HTTP DNS records. A static copy is available at https://static.udpquiz.com/
 
 ## Running locally
 
-```sh
-# Build udpquiz
-make
-
-# Add to /usr/local/bin and create service
-make install
-
-# Add CF token
-echo "CLOUDFLARE_API_TOKEN=<your token>" > /etc/udpquiz/env
-chmod 600 /etc/udpquiz/env
-
-# Enable service
-systemctl enable --now udpquiz
-```
+Take a look at the Makefile.
 
 ## References
 

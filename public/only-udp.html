@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -16,22 +16,9 @@
       }
 
       body {
-        font-family:
-          system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          Roboto,
-          Oxygen,
-          Ubuntu,
-          Cantarell,
-          "Open Sans",
-          "Helvetica Neue",
-          Helvetica,
-          Arial,
-          sans-serif,
-          "Apple Color Emoji",
-          "Segoe UI Emoji",
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue",
+          Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
           "Segoe UI Symbol";
         display: flex;
         justify-content: center;
@@ -44,13 +31,16 @@
         flex-direction: column;
         max-width: min(95vw, 600px);
         min-width: 0;
+        gap: 25px;
+      }
+      code,
+      .mono {
+        font-family: "Courier Prime", ui-monospace, Menlo, Monaco,
+          "Cascadia Mono", "Segoe UI Mono", "Roboto Mono", "Oxygen Mono",
+          "Ubuntu Mono", "Source Code Pro", "Fira Mono", "Droid Sans Mono",
+          "Consolas", "Courier New", monospace;
       }
       code {
-        font-family:
-          "Courier Prime", ui-monospace, Menlo, Monaco, "Cascadia Mono",
-          "Segoe UI Mono", "Roboto Mono", "Oxygen Mono", "Ubuntu Mono",
-          "Source Code Pro", "Fira Mono", "Droid Sans Mono", "Consolas",
-          "Courier New", monospace;
         padding: 2px 5px;
         background-color: #333;
         color: #fff;
@@ -62,6 +52,55 @@
       a.back {
         color: #666;
       }
+      h1,
+      h2,
+      h3,
+      p,
+      ul,
+      pre,
+      blockquote {
+        margin-top: 0;
+        margin-bottom: 0;
+      }
+      li:not(:first-child) {
+        margin-top: 5px;
+      }
+      div.indicator::before {
+        content: "";
+        display: inline-flex;
+        height: 10px;
+        width: 10px;
+        background-color: var(--indicator-color);
+        border-radius: 2px;
+        margin-right: 5px;
+      }
+      div.indicator.green {
+        --indicator-color: #9cd4a1;
+      }
+      div.indicator.red {
+        --indicator-color: #f28080;
+      }
+      .code-block {
+        font-size: 13px;
+        word-break: break-all;
+        white-space: pre-wrap;
+      }
+      .code-block span.comment {
+        color: gray;
+        font-style: italic;
+      }
+      .code-block span.keyword {
+        color: #a626a4;
+      }
+      .code-block span.variable {
+        color: #e06c75;
+      }
+      .code-block span.operator {
+        color: #0184bc;
+      }
+      .code-block span.property {
+        color: #4078f2;
+      }
     </style>
   </head>
   <body>
@@ -71,20 +110,19 @@
         It was a friday night when I saw that someone had
         <a
           href="https://github.com/radiantly/udpquiz/issues/2#issuecomment-3997172530"
+          >commented on an issue</a
         >
-          commented on an issue
-        </a>
         saying that the site was down. I created udpquiz back in 2022, and it
         seemed like a good time to give it a fresh coat of paint.
       </p>
       <p>
         For the update, I thought it'd be pretty interesting if it were only
         available over udp (fits the theme, amirite?). The solution to this is
-        to serve the site over HTTP/3 which uses the QUIC transport layer that
-        uses udp.
+        to serve the site over HTTP/3 that uses the QUIC transport layer
+        (udp-only).
       </p>
       <p>
-        Enabling the site to use just HTTP/3 was as simple as adding
+        Serving the site over only HTTP/3 was as simple as adding
         <code>protocols h3</code>
         to the Caddyfile.
       </p>
@@ -102,7 +140,9 @@
         <li>
           The second option (and the option we're going with) is to create an
           HTTPS DNS record with the value
-          <code>no-default-alpn alpn="h3" ipv4hint="SERVER_IP"</code>.
+          <code>no-default-alpn alpn="h3" ipv4hint="SERVER_IP"</code>. We
+          specify no-default-alpn to signal that the server doesn't offer any
+          default protocol (HTTP/1.1).
         </li>
       </ul>
       <p>
@@ -117,13 +157,90 @@
         value. In the end, I decided to simply pass any incoming udp packet on
         port 443 to caddy and add a note to the home page.
       </p>
+      <h2>The End?</h2>
+      <p>No, we're not done yet. Let's dive into browser support.</p>
+      <h3>Firefox v148, my best friend</h3>
+      <div class="compatibility-list">
+        <div class="indicator green">
+          <!-- prettier-ignore -->
+          <strong>Windows 11</strong> - Works!
+        </div>
+        <div class="indicator red">
+          <strong>Windows 10</strong> - Problem with DnsQuery_A on Windows 10.
+          <a href="https://phabricator.services.mozilla.com/D198020"
+            >Bug 1873461</a
+          >.
+        </div>
+        <div class="indicator red">
+          <strong>MacOS</strong>
+          - Problem with the MacOS resolver.
+          <a href="https://phabricator.services.mozilla.com/D233979"
+            >Bug 1941128</a
+          >.
+        </div>
+        <div class="indicator green">
+          <!-- prettier-ignore -->
+          <strong>Linux</strong> - Works!
+        </div>
+        <div class="indicator green">
+          <strong>Android</strong> - Works if you're on
+          <a
+            href="https://searchfox.org/firefox-main/rev/7095e662eec49a42856e0d99f2ff96c08130119c/netwerk/dns/nsHostResolver.cpp#179"
+            >Android 10+</a
+          >
+        </div>
+      </div>
       <p>
-        Testing this in various browsers: Works fine on Firefox on Linux,
-        Android. Safari on MacOS worked some of the time(?). I could not get
-        Google Chrome to load the site at all. Taking a quick look at wireshark,
-        it's clear that Google Chrome isn't sending an HTTPS DNS request at all
-        and just tries TCP.
+        Additionally, it works on all platforms if you enable DNS over HTTPS in
+        the firefox settings.
       </p>
+      <h3>Chrome v145, the destroyer of fun</h3>
+      <p>
+        Originally, the site did not work on google chrome (all platforms).
+        Having your site not working on the browser that most people use is not
+        a good sign.
+      </p>
+      <p>After digging for a bit, I found this in the chromium source code:</p>
+      <pre
+        class="mono code-block"
+      ><a href="https://chromium.googlesource.com/chromium/src/+/42535d5df198ffb06207d77688ee4e1b98fe1372/net/dns/dns_response_result_extractor.cc#599">net/dns/dns_response_result_extractor.cc</a>
+<span class="comment">// Ignore all records if they all mark "no-default-alpn". Domains should
+// always provide at least one endpoint allowing default ALPN to ensure a
+// reasonable expectation of connection success.
+// draft-ietf-dnsop-svcb-https-12#section-7.1.2</span>
+<span class="keyword">if</span> (<span class="operator">!</span><span class="variable">default_alpn_found</span>) {
+  <span class="variable">metadatas</span>.<span class="property">clear</span>();
+}</pre>
+      <p>
+        and well, yes, the
+        <a href="https://datatracker.ietf.org/doc/html/rfc9460">rfc</a>
+        mentioned in the comment does say:
+      </p>
+      <blockquote
+        cite="https://datatracker.ietf.org/doc/html/rfc9460#section-7.1.2-8"
+      >
+        To ensure consistency of behavior, clients MAY reject the entire SVCB
+        RRset and fall back to basic connection establishment if all of the
+        compatible RRs indicate "no-default-alpn", even if connection could have
+        succeeded using a non-default ALPN protocol.
+      </blockquote>
+      <p>C'mon, it says MAY. @Chromium devs reading this, please fix this.</p>
+      <p>
+        Anyway, I had a big brain moment and simply added a second (lower
+        priority) HTTPS record, this time without the no-default-alpn part. It's
+        not exactly correct since we don't offer HTTP/1.1, but it works.
+      </p>
+      <p>
+        With that, the compatibility matrix is basically the same as Firefox.
+        And if you turn on Secure DNS in the settings and choose a non-OS
+        resolver, it works on all platforms.
+      </p>
+      <h3>Safari v26, what are you doing</h3>
+      <p>
+        The site randomly works on Safari, no clue what's happening, feels
+        non-deterministic. Needs to be investigated.
+      </p>
+      <p>Anyway, thanks for reading!</p>
       <p><a class="back" href="/">← Back to main page</a></p>
     </div>
   </body>

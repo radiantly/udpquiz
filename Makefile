@@ -44,5 +44,10 @@ install: udpquiz
 	@echo ""
 	@echo "# Manual step: enable the udpquiz service"
 	@echo "systemctl enable --now udpquiz"
+	@echo ""
+	@echo "# Highly recommended: disable automatic updates"
+	@echo "# For some reason unattended updates can break all connectivity to the system"
+	@echo "systemctl list-timers --all"
+	@echo "# systemctl disable --now apt-daily.timer motd-news.timer apt-daily-upgrade.timer update-notifier-motd.timer update-notifier-download.timer"
 
 .PHONY: all debug qdisc qdisc-del clean install
